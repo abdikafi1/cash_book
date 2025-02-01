@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ !DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -319,6 +319,47 @@
 
         function cancelEdit() {
             document.getElementById("productForm").style.display = "none";
+        }
+
+        // Handle Product Form Submission (Create/Update)
+        async function handleProductSubmit(e) {
+            e.preventDefault();
+            const productId = document.getElementById("productId").value;
+            const method = productId ? "PUT" : "POST";
+            const url = productId ? `${API_BASE}/products/${productId}` : `${API_BASE}/products`;
+
+            try {
+                const response = await fetch(url, {
+                    method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById("productName").value,
+                        price: document.getElementById("productPrice").value,
+                        description: document.getElementById("productDescription").value,
+                    }),
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message);
+
+                alert(`Product ${productId ? "updated" : "created"} successfully!`);
+                document.getElementById("productForm").style.display = "none";
+                await loadProducts();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function showCreateProductForm() {
+            document.getElementById("productForm").style.display = "block";
+            document.getElementById("formTitle").textContent = "Create Product";
+            document.getElementById("productId").value = "";
+            document.getElementById("productName").value = "";
+            document.getElementById("productPrice").value = "";
+            document.getElementById("productDescription").value = "";
         }
 
         // Initialize
