@@ -50,5 +50,12 @@ const loginUser = asyncHandler(async (req, res) => {
     token: generateToken(user._id), // Generate token after login
   });
 });
+// @desc    Get current user
+// @route   GET /api/auth/me
+// @access  Private
+const getMe = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select('-password');
+  res.json(user);
+});
 
-module.exports = { registerUser, loginUser };
+module.exports = { registerUser, loginUser, getMe };
